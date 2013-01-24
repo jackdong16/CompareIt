@@ -1,13 +1,17 @@
 from django.db import models
 
-class CompareGroup(models.Model):
+#topic we are comparing
+class Topic(models.Model): 
+	title = models.CharField(max_length=100)
 	desc = models.CharField(max_length=200)
 
-	def __unicode__(self):
-		return self.desc
+	#so that when you do CompareGroup.objects.all(), you get [<CompareGroup: "title"]
+	def __unicode__(self): 
+		return self.title
 
-class CompareItem(models.Model):
-	compareGroup = models.ForeignKey(CompareGroup)
+#choices in each topic
+class Choice(models.Model):
+	topic = models.ForeignKey(Topic)
 	title = models.CharField(max_length=100)
 	content = models.CharField(max_length=200)
 
