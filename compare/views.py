@@ -1,4 +1,5 @@
 from django.template import Context, loader
+from django.template import RequestContext
 from compare.models import Topic
 from django.http import HttpResponse
 
@@ -12,7 +13,8 @@ def index(request):
     return HttpResponse(t.render(c))
 
 def detail(request, topic_id):
-    return HttpResponse("You're looking at poll %s." % topic_id)
+    p = get_object_or_404(Poll, pk=topic_id)
+    return render_to_response('topics/detail.html', {'topic': p}, context_instance=RequestContext(request))
 
 def results(request, topic_id):
     return HttpResponse("You're looking at the results of poll %s." % topic_id)
