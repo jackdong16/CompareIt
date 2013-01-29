@@ -1,7 +1,7 @@
-from django.template import Context, loader
-from django.template import RequestContext
-from compare.models import Topic
-from django.http import HttpResponse
+from django.template import Context, loader, RequestContext
+from django.views.generic.simple import direct_to_template
+from compare.models import Topic, TopicForm
+from django.http import HttpResponse, HttpResponseRedirect
 
 #compare module view
 def index(request):
@@ -12,12 +12,15 @@ def index(request):
     })
     return HttpResponse(t.render(c))
 
-def detail(request, topic_id):
-    p = get_object_or_404(Poll, pk=topic_id)
-    return render_to_response('topics/detail.html', {'topic': p}, context_instance=RequestContext(request))
+def add(request):
+    if request.method == 'POST':
+      form = TopicForm(request.POST)
+      if form.is_valid():
+        new_topic = form.save()
+        return HttpResponseRedirect('add/success')
+    else:
+      form = TopicForm()
 
-def results(request, topic_id):
-    return HttpResponse("You're looking at the results of poll %s." % topic_id)
-
-def vote(request, topic_id):
-    return HttpResponse("You're voting on poll %s." % topic_id)
+    return direct_to_template(request,
+                              'topics/add.html',
+                              {'form':form})
